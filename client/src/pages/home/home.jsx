@@ -3,15 +3,14 @@ import Card from "../../components/card";
 import Loader from "../../components/loader";
 import FormField from "../../components/formField";
 
-
-const RenderCards = ({data, title}) => {
-  if(data?.length > 0) {
-    return data.map((post) => <Card key={post._id} {...post} />)
+const RenderCards = ({ data, title }) => {
+  if (data?.length > 0) {
+    return data.map((post) => <Card key={post._id} {...post} />);
   }
   return (
     <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">{title}</h2>
-  )
-}
+  );
+};
 
 function Home() {
   const [loading, setLoading] = useState(false);
@@ -47,7 +46,7 @@ function Home() {
             )}
             <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
               {searchText ? (
-                <RenderCards data={[]}  title="No Search Result Found"/>
+                <RenderCards data={[]} title="No Search Result Found" />
               ) : (
                 <RenderCards data={[]} title="No posts found" />
               )}
