@@ -11,15 +11,57 @@ function CreatePost() {
   const [generatingImg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {};
-  const handleChange = (e) => {
-    setForm({...form, [e.target.name]: e.target.value})
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (form.prompt && form.photo) {
+      setLoading(true);
+      try {
+        const response = await fetch("http://localhost:5000/api/v1/post", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+
+        await response.json();
+        navigate("/");
+      } catch (error) {
+        alert(err);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      alert("Please enter a prompt and generate an image");
+    }
   };
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   const handleSurpriseMe = () => {
     const randomPrompt = getRandomPrompt(form.prompt);
-    setForm({...form, prompt:randomPrompt})
+    setForm({ ...form, prompt: randomPrompt });
   };
-  const generateImage = () => {};
+  const generateImage = async () => {
+    if (form.prompt) {
+      try {
+        setGeneratingImg(true);
+        const response = await fetch("http://localhost:5000/api/v1/dalle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: form.prompt }),
+        });
+
+        const data = await response.json();
+        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+      } catch (error) {
+        alert(error);
+      } finally {
+        setGeneratingImg(false);
+      }
+    } else {
+      alert("Please enter a prompt");
+    }
+  };
 
   return (
     <section className="max-w-7x1 mx-auto">
@@ -41,7 +83,7 @@ function CreatePost() {
             handleChange={handleChange}
           />
           <FormField
-            labelName="prompt"
+            labelName="Prompt"
             type="text"
             name="prompt"
             placeholder="A cat flying in space"
@@ -93,7 +135,7 @@ function CreatePost() {
           className="mt-3 text-white bg-[#6469ff] font-medium 
         rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
         >
-          {loading ? "sharing" : "Share with the community"}
+          {loading ? "sharing..." : "Share with the community"}
         </button>
       </form>
     </section>

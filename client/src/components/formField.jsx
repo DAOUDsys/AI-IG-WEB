@@ -5,6 +5,7 @@ function FormField({
   type,
   placeholder,
   value,
+  name,
   handleChange,
   isSurpriseMe,
   handleSurpriseMe,
